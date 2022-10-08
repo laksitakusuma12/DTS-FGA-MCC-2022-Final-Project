@@ -26,6 +26,8 @@ namespace LeaveManagementWebClient
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //Implement DbContext
             services.AddDbContext<DBContext>(option =>
                 option.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
         }
