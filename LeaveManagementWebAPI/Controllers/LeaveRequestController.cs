@@ -25,22 +25,34 @@ namespace LeaveManagementWebAPI.Controllers
             _leaveRequestRepository = leaveRequestRepository;
         }
 
-        [HttpGet]
-        public IActionResult GetDataService()
-        {
-            var data = _leaveRequestRepository.GetData();
-            if (data.Count == 0)
-                return Ok(new { statusCode = 200, data = "null" });
-
-            return Ok(new { statusCode = 200, data = data });
-        }
-
         [Route("{id}")]
         [HttpGet]
         public IActionResult GetDataService(int id)
         {
             var data = _leaveRequestRepository.GetData(id);
             if (data == null)
+                return Ok(new { statusCode = 200, data = "null" });
+
+            return Ok(new { statusCode = 200, data = data });
+        }
+
+        [Route("get-by-manager/{managerId}/{departmentTypeId}")]
+        [HttpGet]
+        public IActionResult GetDataByManagerService(int managerId, int departmentTypeId)
+        {
+            var data = _leaveRequestRepository.GetDataByManager(managerId, departmentTypeId);
+            if (data.Count == 0)
+                return Ok(new { statusCode = 200, data = "null" });
+
+            return Ok(new { statusCode = 200, data = data });
+        }
+
+        [Route("get-by-employee/{userId}")]
+        [HttpGet]
+        public IActionResult GetDataByEmployeeService(int userId)
+        {
+            var data = _leaveRequestRepository.GetDataByEmployee(userId);
+            if (data.Count == 0)
                 return Ok(new { statusCode = 200, data = "null" });
 
             return Ok(new { statusCode = 200, data = data });

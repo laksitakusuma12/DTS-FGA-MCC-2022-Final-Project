@@ -6,9 +6,11 @@ namespace LeaveManagementWebAPI.Repositories.Interfaces
 {
     interface ILeaveRequestRepository
     {
-        List<LeaveRequest> GetData();
-
         LeaveRequest GetData(int id);
+
+        List<LeaveRequest> GetDataByManager(int managerId, int departmentTypeId);
+
+        List<LeaveRequest> GetDataByEmployee(int userId);
 
         int EditData(LeaveRequestViewModel leaveRequestViewModel);
 

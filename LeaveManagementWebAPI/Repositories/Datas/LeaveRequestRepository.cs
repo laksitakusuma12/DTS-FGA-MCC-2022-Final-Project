@@ -19,15 +19,6 @@ namespace LeaveManagementWebAPI.Repositories.Datas
             _dbContext = dbContext;
         }
 
-        public List<LeaveRequest> GetData()
-        {
-            return _dbContext.LeaveRequests
-                .Include(model => model.leaveType)
-                .Include(model => model.leaveStatusType)
-                .Include(model => model.user)
-                .ToList();
-        }
-
         public LeaveRequest GetData(int id)
         {
             return _dbContext.LeaveRequests
@@ -35,6 +26,26 @@ namespace LeaveManagementWebAPI.Repositories.Datas
                 .Include(model => model.leaveStatusType)
                 .Include(model => model.user)
                 .FirstOrDefault(model => model.id == id);
+        }
+
+        public List<LeaveRequest> GetDataByManager(int managerId, int departmentTypeId)
+        {
+            return _dbContext.LeaveRequests
+                .Include(model => model.leaveType)
+                .Include(model => model.leaveStatusType)
+                .Include(model => model.user)
+                .Where(model => model.user.employee.managerId == managerId && model.user.employee.departmentTypeId == departmentTypeId)
+                .ToList();
+        }
+
+        public List<LeaveRequest> GetDataByEmployee(int userId)
+        {
+            return _dbContext.LeaveRequests
+                .Include(model => model.leaveType)
+                .Include(model => model.leaveStatusType)
+                .Include(model => model.user)
+                .Where(model => model.user.id == userId)
+                .ToList();
         }
 
         public int EditData(LeaveRequestViewModel leaveRequestViewModel)
@@ -51,8 +62,21 @@ namespace LeaveManagementWebAPI.Repositories.Datas
                 _dbContext.LeaveRequests.Update(data);
                 result = _dbContext.SaveChanges();
 
-                return result;
+                var getLeaveStatusType = _dbContext.LeaveStatusTypes.FirstOrDefault(model => model.name.ToLower().Contains("Rejected".ToLower()));
 
+                if (result == 1 && leaveRequestViewModel.leaveStatusTypeId == getLeaveStatusType.id)
+                {
+                    var userData = _dbContext.Users.Find(leaveRequestViewModel.userId);
+
+                    userData.availableLeaves += leaveRequestViewModel.requestedDays;
+
+                    _dbContext.Users.Update(userData);
+                    result = _dbContext.SaveChanges();
+
+                    return result;
+                }
+
+                return result;
             }
 
             return result;
@@ -60,6 +84,8 @@ namespace LeaveManagementWebAPI.Repositories.Datas
 
         public int CreateData(LeaveRequestViewModel leaveRequestViewModel)
         {
+            int result = 0;
+
             _dbContext.LeaveRequests.Add(new LeaveRequest
             {
                 leaveTypeId = leaveRequestViewModel.leaveTypeId,
@@ -72,7 +98,19 @@ namespace LeaveManagementWebAPI.Repositories.Datas
                 createdAt = DateTime.Now,
                 updatedAt = DateTime.Now
             });
-            var result = _dbContext.SaveChanges();
+            result = _dbContext.SaveChanges();
+
+            if (result == 1)
+            {
+                var userData = _dbContext.Users.Find(leaveRequestViewModel.userId);
+
+                userData.availableLeaves -= leaveRequestViewModel.requestedDays;
+
+                _dbContext.Users.Update(userData);
+                result = _dbContext.SaveChanges();
+
+                return result;
+            }
 
             return result;
         }
