@@ -75,18 +75,30 @@ namespace LeaveManagementWebAPI.Repositories.Datas
         {
             int result = 0;
 
-            var data = _dbContext.Users
-                .Include(model => model.employee)
-                .FirstOrDefault(model => model.employee.email.Equals(registerViewModel.email));
+            var data = _dbContext.Employees.FirstOrDefault(model => model.email.Equals(registerViewModel.email));
 
             if (data != null)
             {
-                var user = new User
+                var getManagerUserRole = _dbContext.UserRoleTypes.FirstOrDefault(model => model.name.ToLower().Contains("Manager".ToLower()));
+
+                if (data.managerId == null)
                 {
-                    id = data.employee.id,
-                    password = HashPassword(registerViewModel.password)
-                };
-                _dbContext.Users.Add(user);
+                    _dbContext.Users.Add(new User
+                    {
+                        id = data.id,
+                        userRoleTypeId = getManagerUserRole.id,
+                        password = HashPassword(registerViewModel.password)
+                    });
+                }
+                else
+                {
+                    _dbContext.Users.Add(new User
+                    {
+                        id = data.id,
+                        password = HashPassword(registerViewModel.password)
+                    });
+                }
+
                 int isNewUserSaved = _dbContext.SaveChanges();
 
                 if (isNewUserSaved == 1)
@@ -116,7 +128,9 @@ namespace LeaveManagementWebAPI.Repositories.Datas
                 if (isPasswordCorrect)
                 {
                     var newData = _dbContext.Users.Find(data.id);
+                    
                     newData.password = HashPassword(changePasswordViewModel.newPassword);
+                    
                     _dbContext.Users.Update(newData);
                     result = _dbContext.SaveChanges();
 
@@ -140,7 +154,9 @@ namespace LeaveManagementWebAPI.Repositories.Datas
             if (data != null)
             {
                 var newData = _dbContext.Users.Find(data.id);
+
                 newData.password = HashPassword(loginViewModel.password);
+                
                 _dbContext.Users.Update(newData);
                 result = _dbContext.SaveChanges();
 
