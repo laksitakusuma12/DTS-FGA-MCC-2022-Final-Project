@@ -28,11 +28,11 @@ namespace LeaveManagementWebAPI.Models
         public int requestedDays { get; set; }
 
         [Required]
-        [Column(TypeName = "datetime")]
+        [Column(TypeName = "date")]
         public DateTime startDate { get; set; }
 
         [Required]
-        [Column(TypeName = "datetime")]
+        [Column(TypeName = "date")]
         public DateTime endDate { get; set; }
 
         [Column(TypeName = "text")]
