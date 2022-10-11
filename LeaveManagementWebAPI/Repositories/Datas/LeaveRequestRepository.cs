@@ -62,7 +62,7 @@ namespace LeaveManagementWebAPI.Repositories.Datas
                 _dbContext.LeaveRequests.Update(data);
                 result = _dbContext.SaveChanges();
 
-                var getLeaveStatusType = _dbContext.LeaveStatusTypes.FirstOrDefault(model => model.name.ToLower().Contains("Rejected".ToLower()));
+                var getLeaveStatusType = _dbContext.LeaveStatusTypes.FirstOrDefault(model => model.name.ToLower().Equals("Rejected".ToLower()));
 
                 if (result == 1 && leaveRequestViewModel.leaveStatusTypeId == getLeaveStatusType.id)
                 {

@@ -79,7 +79,7 @@ namespace LeaveManagementWebAPI.Repositories.Datas
 
             if (data != null)
             {
-                var getManagerUserRole = _dbContext.UserRoleTypes.FirstOrDefault(model => model.name.ToLower().Contains("Manager".ToLower()));
+                var getManagerUserRole = _dbContext.UserRoleTypes.FirstOrDefault(model => model.name.ToLower().Equals("Manager".ToLower()));
 
                 if (data.managerId == null)
                 {
