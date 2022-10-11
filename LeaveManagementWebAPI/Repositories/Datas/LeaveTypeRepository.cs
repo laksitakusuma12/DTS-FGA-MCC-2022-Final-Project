@@ -28,6 +28,20 @@ namespace LeaveManagementWebAPI.Repositories.Datas
             return _dbContext.LeaveTypes.Find(id);
         }
 
+        public List<LeaveType> GetDataByGender(int genderId)
+        {
+            var getGenderData = _dbContext.GenderTypes.Find(genderId);
+
+            if (getGenderData.name.ToLower().Equals("Male".ToLower()))
+            {
+                return _dbContext.LeaveTypes
+                    .Where(model => !model.name.ToLower().Contains("Maternity".ToLower()))
+                    .ToList();
+            }
+
+            return GetData();
+        }
+
         public int EditData(LeaveTypeViewModel leaveTypeViewModel)
         {
             int result = 0;

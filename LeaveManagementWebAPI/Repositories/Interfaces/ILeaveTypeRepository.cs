@@ -10,6 +10,8 @@ namespace LeaveManagementWebAPI.Repositories.Interfaces
 
         LeaveType GetData(int id);
 
+        List<LeaveType> GetDataByGender(int genderId);
+
         int EditData(LeaveTypeViewModel leaveTypeViewModel);
 
         int CreateData(LeaveTypeViewModel leaveTypeViewModel);

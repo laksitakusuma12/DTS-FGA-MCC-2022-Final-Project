@@ -46,6 +46,17 @@ namespace LeaveManagementWebAPI.Controllers
             return Ok(new { statusCode = 200, data = data });
         }
 
+        [Route("get-by-gender/{genderId}")]
+        [HttpGet]
+        public IActionResult GetDataByGenderService(int genderId)
+        {
+            var data = _leaveTypeRepository.GetDataByGender(genderId);
+            if (data == null)
+                return Ok(new { statusCode = 200, data = "null" });
+
+            return Ok(new { statusCode = 200, data = data });
+        }
+
         [Route("edit")]
         [HttpPut]
         public IActionResult EditDataService(LeaveTypeViewModel leaveTypeViewModel)
